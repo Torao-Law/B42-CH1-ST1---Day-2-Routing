@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"html/template"
+	"log"
 	"net/http"
 	"strconv"
 
@@ -16,10 +17,11 @@ func main() {
 	route.PathPrefix("/public/").Handler(http.StripPrefix("/public/", http.FileServer(http.Dir("./public"))))
 
 	route.HandleFunc("/", home).Methods("GET")
-	route.HandleFunc("/addblog", addBlog).Methods("GET")
+	route.HandleFunc("/formblog", formBlog).Methods("GET")
 	route.HandleFunc("/blog-detail/{id}", blogDetail).Methods("GET")
 	route.HandleFunc("/blog", blog).Methods("GET")
 	route.HandleFunc("/contact", contact).Methods("GET")
+	route.HandleFunc("/add-blog", addBlog).Methods("POST")
 
 	fmt.Println("Server berjalan pada port 5000")
 	http.ListenAndServe("localhost:5000", route)
@@ -37,7 +39,7 @@ func home(w http.ResponseWriter, r *http.Request) {
 	tmpt.Execute(w, nil)
 }
 
-func addBlog(w http.ResponseWriter, r *http.Request) {
+func formBlog(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-type", "text/html; charset=utf-8")
 	tmpt, err := template.ParseFiles("views/add-blog.html")
 
@@ -47,6 +49,19 @@ func addBlog(w http.ResponseWriter, r *http.Request) {
 	}
 
 	tmpt.Execute(w, nil)
+}
+
+func addBlog(w http.ResponseWriter, r *http.Request) {
+	err := r.ParseForm()
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	fmt.Println("Title : " + r.PostForm.Get("title"))
+
+	http.Redirect(w, r, "/", http.StatusMovedPermanently)
+
 }
 
 func blogDetail(w http.ResponseWriter, r *http.Request) {

@@ -29,11 +29,11 @@
     <div class="blog">
       <div class="blog-form">
         <div class="form-container">
-          <form onsubmit="addBlog(event)">
+          <form action="/add-blog" method="POST">
             <h1>Create Post Blog</h1>
             <div>
               <label for="input-blog-title">Title</label>
-              <input id="input-blog-title" />
+              <input name="title" id="input-blog-title" />
             </div>
             <div>
               <label for="input-blog-content">Content</label>
